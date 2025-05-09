@@ -863,8 +863,6 @@ export default AccountPage;
 =======
 "use client"
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import Head from 'next/head';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -1092,7 +1090,6 @@ const AccountPage = () => {
             <p className="text-gray-600">Loading your account...</p>
           </div>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -1114,17 +1111,17 @@ const AccountPage = () => {
             </Link>
           </div>
         </main>
-        <Footer />
+
       </div>
     );
   }
   
   return (
     <>
-      <Head>
+
         <title>My Account - EcoCycle</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </Head>
+
 
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Header />
@@ -1714,8 +1711,6 @@ const AccountPage = () => {
             </div>
           </div>
         </main>
-        
-        <Footer />
       </div>
     </>
   );

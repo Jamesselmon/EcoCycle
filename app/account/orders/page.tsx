@@ -24,49 +24,51 @@ const OrdersPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Fetch orders (mock data in this example)
   useEffect(() => {
-    // Simulate API call to fetch orders
-    setTimeout(() => {
-      setOrders([
-        {
-          id: 'ECO-12345678',
-          date: 'May 1, 2025',
-          status: 'delivered',
-          total: 35.97,
-          items: 3,
-          trackingNumber: 'TRK-9876543210',
-          deliveryEstimate: 'Delivered on Apr 28, 2025'
-        },
-        {
-          id: 'ECO-87654321',
-          date: 'Apr 15, 2025',
-          status: 'shipped',
-          total: 15.99,
-          items: 1,
-          trackingNumber: 'TRK-5432109876',
-          deliveryEstimate: 'Arriving May 5, 2025'
-        },
-        {
-          id: 'ECO-11223344',
-          date: 'Mar 22, 2025',
-          status: 'delivered',
-          total: 67.45,
-          items: 4,
-          trackingNumber: 'TRK-1122334455',
-          deliveryEstimate: 'Delivered on Mar 29, 2025'
-        },
-        {
-          id: 'ECO-55667788',
-          date: 'Feb 10, 2025',
-          status: 'cancelled',
-          total: 29.99,
-          items: 2
+    const fetchOrders = async () => {
+      setIsLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error("No token found");
+          return;
         }
-      ]);
-      setIsLoading(false);
-    }, 1000);
+  
+        console.log('Fetching orders...');
+        const res = await fetch('http://localhost:8000/orders/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+          },
+        });
+  
+        console.log('Response status:', res.status);
+  
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          console.error('Error response:', errorData);
+          throw new Error(`Failed to fetch orders: ${res.status}`);
+        }
+  
+        const data = await res.json();
+        console.log('Orders data received:', data);
+  
+        if (data.orders && Array.isArray(data.orders)) {
+          setOrders(data.orders);
+        } else {
+          throw new Error('Invalid data format received');
+        }
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchOrders();
   }, []);
+  
   
   // Function to get status badge color based on order status
   const getStatusBadgeColor = (status: Order['status']) => {

@@ -5,8 +5,10 @@ import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 interface OrderSummary {
+  customer_email: string;
   orderId: string;
   orderDate: string;
   items: {
@@ -39,50 +41,34 @@ const OrderConfirmationPage = () => {
   const router = useRouter();
   const [orderDetails, setOrderDetails] = useState<OrderSummary | null>(null);
   const [loading, setLoading] = useState(true);
-  
-  // In a real application, you would fetch order details from the server
-  // For this example, we'll use mock data
+
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("orderId");
+  if (!orderId) {
+    console.error("Missing orderId in URL.");
+    setLoading(false);
+    return;
+  }
+
   useEffect(() => {
-    // Simulate API call to fetch order details
-    setTimeout(() => {
-      setOrderDetails({
-        orderId: 'ECO-' + Math.floor(10000000 + Math.random() * 90000000),
-        orderDate: new Date().toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        items: [
-          { id: '1', name: 'Name1', quantity: 1, price: 1.00, imageUrl: 'https://via.placeholder.com/50x50' },
-          { id: '2', name: 'Name2', quantity: 2, price: 2.00, imageUrl: 'https://via.placeholder.com/50x50' }
-        ],
-        shipping: {
-          name: 'John Doe',
-          address: '123 Main St',
-          city: 'San Francisco',
-          state: 'CA',
-          postalCode: '94103',
-          country: 'United States'
-        },
-        payment: {
-          method: 'PayPal',
-        },
-        subtotal: 5.00,
-        shippingCost: 5.00,
-        tax: 0.50,
-        total: 10.50,
-        estimatedDelivery: new Date(Date.now() + 7*24*60*60*1000).toLocaleDateString('en-US', {
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric'
-        })
-      });
+    if (!orderId) {
       setLoading(false);
-    }, 1000);
-  }, []);
-  
+      return;
+    }
+
+    fetch(`http://127.0.0.1:8000/order/${orderId}/confirmation/`)
+      .then(res => res.json())
+      .then(data => {
+        setOrderDetails(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error loading order confirmation:", err);
+        setLoading(false);
+      });
+  }, [orderId]);
+
+
   if (loading) {
     return (
       <div className="flex flex-col min-h-screen bg-gray-50">
@@ -96,7 +82,7 @@ const OrderConfirmationPage = () => {
       </div>
     );
   }
-  
+
   if (!orderDetails) {
     return (
       <div className="flex flex-col min-h-screen bg-gray-50">
@@ -112,7 +98,7 @@ const OrderConfirmationPage = () => {
       </div>
     );
   }
-  
+
   return (
     <>
       <Head>
@@ -132,10 +118,12 @@ const OrderConfirmationPage = () => {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Thank You For Your Order!</h1>
               <p className="text-gray-600">Your order has been received and is now being processed.</p>
               <p className="text-gray-600">
-                We've sent a confirmation email to <span className="font-medium">john.doe@example.com</span>
+                We've sent a confirmation email to <span className="font-medium">{orderDetails.customer_email}</span>
               </p>
+
+
             </div>
-            
+
             <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
               <div className="p-6 bg-emerald-50 border-b border-emerald-100">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center">
@@ -151,7 +139,7 @@ const OrderConfirmationPage = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="p-6">
                 <div className="flex flex-col md:flex-row md:space-x-8">
                   {/* Order Summary */}
@@ -162,8 +150,8 @@ const OrderConfirmationPage = () => {
                         <div key={item.id} className="flex items-start">
                           <div className="flex-shrink-0 h-16 w-16 bg-gray-100 rounded-md overflow-hidden mr-4">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img 
-                              src={item.imageUrl} 
+                            <img
+                              src={`http://127.0.0.1:8000${item.imageUrl}`}
                               alt={item.name}
                               className="h-full w-full object-cover"
                             />
@@ -173,32 +161,32 @@ const OrderConfirmationPage = () => {
                             <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-medium text-gray-800">${(item.price * item.quantity).toFixed(2)}</p>
+                            <p className="font-medium text-gray-800">{(item.price * item.quantity).toFixed(2)} ฿ </p>
                           </div>
                         </div>
                       ))}
                     </div>
-                    
+
                     <div className="mt-6 pt-6 border-t border-gray-200">
                       <div className="flex justify-between mb-2">
                         <span className="text-gray-600">Subtotal</span>
-                        <span className="text-gray-800">${orderDetails.subtotal.toFixed(2)}</span>
+                        <span className="text-gray-800">{orderDetails.subtotal.toFixed(2)} ฿</span>
                       </div>
                       <div className="flex justify-between mb-2">
                         <span className="text-gray-600">Shipping</span>
-                        <span className="text-gray-800">${orderDetails.shippingCost.toFixed(2)}</span>
+                        <span className="text-gray-800">{orderDetails.shippingCost.toFixed(2)} ฿</span>
                       </div>
                       <div className="flex justify-between mb-4">
                         <span className="text-gray-600">Tax</span>
-                        <span className="text-gray-800">${orderDetails.tax.toFixed(2)}</span>
+                        <span className="text-gray-800">{orderDetails.tax.toFixed(2)} ฿</span>
                       </div>
                       <div className="flex justify-between font-bold text-lg">
                         <span className="text-gray-800">Total</span>
-                        <span className="text-emerald-600">${orderDetails.total.toFixed(2)}</span>
+                        <span className="text-emerald-600">{orderDetails.total.toFixed(2)} ฿</span>
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Shipping & Payment Info */}
                   <div className="flex-1">
                     <div className="mb-6">
@@ -212,12 +200,12 @@ const OrderConfirmationPage = () => {
                         <p className="text-gray-600">{orderDetails.shipping.country}</p>
                       </div>
                     </div>
-                    
+
                     <div className="mb-6">
                       <h3 className="font-bold text-gray-800 mb-4">Payment Method</h3>
                       <div className="bg-gray-50 rounded-lg p-4">
                         <p className="flex items-center text-gray-800">
-                          {orderDetails.payment.method === 'PayPal' ? (
+                          {orderDetails.payment.method.toLowerCase() === 'paypal' ? (
                             <>
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 mr-2" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.494a.64.64 0 0 1 .632-.543h6.964c2.075 0 3.747.517 4.757 1.501.957.945 1.222 2.089.82 3.854-.08.357-.218.732-.393 1.108a.637.637 0 0 1-.13.207l.018-.013c1.071 1.156 1.515 2.498 1.317 4.016-.22 1.687-.937 3.103-2.14 4.215-1.219 1.13-2.892 1.689-5.096 1.689H8.55l-.262 1.69a.638.638 0 0 1-.63.536H7.076v.01z" />
@@ -235,7 +223,7 @@ const OrderConfirmationPage = () => {
                         </p>
                       </div>
                     </div>
-                    
+
                     <div>
                       <h3 className="font-bold text-gray-800 mb-4">Estimated Delivery</h3>
                       <div className="bg-gray-50 rounded-lg p-4">
@@ -246,15 +234,15 @@ const OrderConfirmationPage = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
-              <Link 
-                href="/"
+              <Link
+                href="/products"
                 className="bg-white text-emerald-600 font-medium py-3 px-6 rounded-lg border border-emerald-200 hover:bg-emerald-50 transition-colors duration-200 text-center"
               >
                 Continue Shopping
               </Link>
-              <Link 
+              <Link
                 href="/account/orders"
                 className="bg-emerald-600 text-white font-medium py-3 px-6 rounded-lg hover:bg-emerald-700 transition-colors duration-200 text-center"
               >

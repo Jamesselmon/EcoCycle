@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -40,12 +41,12 @@ const LoginPage = () => {
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);  // Start loading
+    setIsLoading(true);  
     const requestData = {
-      username: email, // เปลี่ยนให้ตรงกับ API ที่ backend คาดหวัง
+      username: email, 
       password,
     };
-    console.log("Sending request with data:", requestData); // ดูข้อมูลที่ส่งไป
+    console.log("Sending request with data:", requestData); 
     
     try {
       const res = await fetch('http://127.0.0.1:8000/login/', {
@@ -75,11 +76,12 @@ const LoginPage = () => {
       }));
     }
     
-    setIsLoading(false);  // End loading
+    setIsLoading(false);  
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
+      
       <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-10">

@@ -42,35 +42,33 @@ const LoginPage = () => {
   }, [searchParams]);
   
   const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);  // Start loading
-
-  // (1) ส่งคำขอไปยัง backend
-  const res = await fetch('http://127.0.0.1:8000/login/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ username: email, password }),
-  });
-
-  const data = await res.json();
-
-  // (2) ตรวจว่าล็อกอินสำเร็จไหม
-  if (res.ok) {
-    localStorage.setItem('isAuthenticated', 'true');
-    router.push('/');
-    window.location.reload();
-  } else {
-    setErrors(prev => ({
-      ...prev,
-      general: data.error || 'Invalid email or password',
-    }));
-  }
-
-  setIsLoading(false);  // End loading
-};
-
+    e.preventDefault();
+    setIsLoading(true);
+  
+    const res = await fetch('http://127.0.0.1:8000/login/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: email, password }),
+    });
+  
+    const data = await res.json();
+  
+    if (res.ok) {
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userId', data.user?.id?.toString() || '');
+      localStorage.setItem('token', data.token || '');
+      router.push('/products'); // ✅ redirect ไปหน้าสินค้า
+    } else {
+      setErrors(prev => ({
+        ...prev,
+        general: data.error || 'Invalid email or password',
+      }));
+    }
+  
+    setIsLoading(false);
+  };
   
 
   
@@ -108,7 +106,7 @@ const LoginPage = () => {
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 placeholder:text-gray-500 text-gray-500 `}
+                    className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 placeholder:text-gray-500 text-gray-700 `}
                     placeholder="Email"
                   />
                   {errors.email && (
@@ -174,37 +172,6 @@ const LoginPage = () => {
                   </button>
                 </div>
               </form>
-              
-              <div className="mt-8">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                  </div>
-                </div>
-
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    <svg className="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972a6.033 6.033 0 110-12.064c1.498 0 2.866.549 3.921 1.453l2.814-2.814A9.969 9.969 0 0012.545 2C7.021 2 2.543 6.477 2.543 12s4.478 10 10.002 10c8.396 0 10.249-7.85 9.426-11.748l-9.426-.013z" />
-                    </svg>
-                  </button>
-
-                  <button
-                    type="button"
-                    className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    <svg className="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0014.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.202h3.312z" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
             </div>
             
             <div className="text-center">

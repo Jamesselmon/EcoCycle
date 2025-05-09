@@ -1,8 +1,8 @@
 "use client";
-
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Footer from '@/components/Footer';
+import Header from '@/components/Header';
 import Head from 'next/head';
 
 type Product = {
@@ -77,6 +77,7 @@ const ProductPage = () => {
             </Head>
 
             <div className="flex flex-col min-h-screen bg-gray-100 font-[Playfair Display]">
+            <Header />
                 <main className="flex-grow">
                     <section className="container mx-auto py-10">
                         <div className="mb-10 flex justify-center items-center gap-3">
