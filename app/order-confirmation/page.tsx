@@ -1,6 +1,5 @@
 // Order Confirmation Page Component
 "use client"
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
@@ -87,7 +86,6 @@ const OrderConfirmationPage = () => {
   if (loading) {
     return (
       <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center p-12">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4"></div>
@@ -102,7 +100,6 @@ const OrderConfirmationPage = () => {
   if (!orderDetails) {
     return (
       <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center p-12">
             <p className="text-red-500 mb-4">Unable to retrieve order details.</p>
@@ -124,7 +121,6 @@ const OrderConfirmationPage = () => {
       </Head>
 
       <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
         <main className="flex-grow">
           <div className="max-w-4xl mx-auto px-4 py-12">
             <div className="text-center mb-10">

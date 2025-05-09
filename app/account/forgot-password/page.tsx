@@ -1,6 +1,5 @@
 // Forgot Password Page Component
 "use client"
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Head from 'next/head';
 import React, { useState } from 'react';
@@ -75,7 +74,6 @@ const ForgotPasswordPage = () => {
       </Head>
 
       <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
         <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-md w-full">
             <div className="text-center mb-10">

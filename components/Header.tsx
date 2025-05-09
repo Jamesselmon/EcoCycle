@@ -12,7 +12,6 @@ const Header = () => {
                         <li><Link href="/" className="hover:text-emerald-500 transition-colors whitespace-nowrap">Home</Link></li>
                         <li><Link href="/products" className="hover:text-emerald-500 transition-colors whitespace-nowrap">Products</Link></li>
                         <li><Link href="/cart" className="hover:text-emerald-500 transition-colors whitespace-nowrap">Cart</Link></li>
-                        <li><Link href="/account/login" className="hover:text-emerald-500 transition-colors whitespace-nowrap">Account</Link></li>
                     </ul>
                 </nav>
             </div>

@@ -1,6 +1,5 @@
 // Admin Dashboard Page Component
 "use client"
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Head from 'next/head';
 import React, { useState, useEffect } from 'react';
@@ -171,7 +170,6 @@ const AdminDashboardPage = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4"></div>
@@ -187,7 +185,6 @@ const AdminDashboardPage = () => {
   if (!isAdmin) {
     return (
       <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <div className="text-red-500 text-lg mb-2">Access Denied</div>
@@ -213,7 +210,6 @@ const AdminDashboardPage = () => {
       </Head>
 
       <div className="flex flex-col min-h-screen bg-gray-100">
-        <Header />
         
         <main className="flex-grow">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

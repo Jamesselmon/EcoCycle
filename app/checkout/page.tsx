@@ -1,6 +1,5 @@
 // Checkout Page Component
 "use client"
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Head from 'next/head';
 import React, { useState } from 'react';
@@ -117,7 +116,6 @@ const CheckoutPage = () => {
       </Head>
 
       <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
         <main className="flex-grow">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 className="text-4xl font-bold text-center text-emerald-600 mb-6">Checkout</h1>

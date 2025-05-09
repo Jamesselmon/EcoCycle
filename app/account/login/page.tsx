@@ -1,6 +1,5 @@
 // Account Login Page Component
 "use client"
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Head from 'next/head';
 import React, { useState, useEffect } from 'react';
@@ -42,63 +41,38 @@ const LoginPage = () => {
     }
   }, [searchParams]);
   
-  // Handle login form submission
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Reset errors
-    setErrors({
-      email: '',
-      password: '',
-      general: ''
-    });
-    
-    // Validate form
-    let isValid = true;
-    
-    if (!email) {
-      setErrors(prev => ({ ...prev, email: 'Email is required' }));
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setErrors(prev => ({ ...prev, email: 'Please enter a valid email address' }));
-      isValid = false;
-    }
-    
-    if (!password) {
-      setErrors(prev => ({ ...prev, password: 'Password is required' }));
-      isValid = false;
-    }
-    
-    if (!isValid) return;
-    
-    // Show loading
-    setIsLoading(true);
-    
-    try {
-      // In a real application, you would call your authentication API here
-      // For this example, we'll just simulate an API call with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simulated successful login
-      console.log('Login successful');
-      
-      // Store authentication state (in a real app, would store JWT token etc.)
-      localStorage.setItem('isAuthenticated', 'true');
-      
-      // Redirect after successful login
-      // Check if there's a returnUrl parameter
-      const returnUrl = searchParams?.get('returnUrl') || '/account';
-      router.push(returnUrl);
-    } catch (error) {
-      // Handle login error
-      setErrors(prev => ({ 
-        ...prev, 
-        general: 'Invalid email or password. Please try again.' 
-      }));
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  e.preventDefault();
+  setIsLoading(true);  // Start loading
+
+  // (1) ส่งคำขอไปยัง backend
+  const res = await fetch('http://127.0.0.1:8000/login/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username: email, password }),
+  });
+
+  const data = await res.json();
+
+  // (2) ตรวจว่าล็อกอินสำเร็จไหม
+  if (res.ok) {
+    localStorage.setItem('isAuthenticated', 'true');
+    router.push('/');
+    window.location.reload();
+  } else {
+    setErrors(prev => ({
+      ...prev,
+      general: data.error || 'Invalid email or password',
+    }));
+  }
+
+  setIsLoading(false);  // End loading
+};
+
+  
+
   
   return (
     <>
@@ -108,7 +82,6 @@ const LoginPage = () => {
       </Head>
 
       <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
         <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-md w-full">
             <div className="text-center mb-10">
@@ -125,7 +98,7 @@ const LoginPage = () => {
               
               <form onSubmit={handleLogin} className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 ">
                     Email
                   </label>
                   <input
@@ -135,8 +108,8 @@ const LoginPage = () => {
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200`}
-                    placeholder="you@example.com"
+                    className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 placeholder:text-gray-500 text-gray-500 `}
+                    placeholder="Email"
                   />
                   {errors.email && (
                     <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -148,7 +121,7 @@ const LoginPage = () => {
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                       Password
                     </label>
-                    <Link href="/account/forgot-password" className="text-sm text-emerald-600 hover:text-emerald-500">
+                    <Link href="/account/forgot-password" className="text-sm text-emerald-600 hover:text-emerald-500 ">
                       Forgot password?
                     </Link>
                   </div>
@@ -159,8 +132,8 @@ const LoginPage = () => {
                     autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full p-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200`}
-                    placeholder="••••••••"
+                    className={`w-full p-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 placeholder:text-gray-500 text-gray-800`}
+                    placeholder="Password"
                   />
                   {errors.password && (
                     <p className="mt-1 text-sm text-red-600">{errors.password}</p>

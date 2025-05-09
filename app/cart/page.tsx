@@ -1,6 +1,5 @@
 // Cart Page Component
 "use client"
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Head from 'next/head';
 import React, { useState, useEffect } from 'react';
@@ -65,7 +64,7 @@ const CartPage = () => {
 
   // Format price as currency
   const formatPrice = (price: number): string => {
-    return `${price.toFixed(2)}$`;
+    return `$${parseFloat(price.toString()).toFixed(2)}`;
   };
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -85,7 +84,6 @@ const CartPage = () => {
       </Head>
 
       <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
         <main className="flex-grow">
           <section className="container mx-auto px-4 py-8">
             <h1 className="text-4xl font-bold text-center mb-8 text-emerald-600">My Cart</h1>
